@@ -1,0 +1,8 @@
+# Python 3.10+ (tested on 3.12). Install: python -m pip install -r requirements.txt
+faster-whisper>=1.0      # word-level transcription (models download to work/hf_cache on first use)
+numpy
+soundfile
+Pillow
+librosa                  # music audition only
+pypdfium2                # client onboarding: render creative-direction PDFs to images (work/scripts/source_pages.py)
+matplotlib               # optional: waveform plots (work/scripts/waveplot.py)
