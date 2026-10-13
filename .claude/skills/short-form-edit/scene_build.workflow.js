@@ -38,7 +38,14 @@ READ (nothing else unless needed):
    full-screen scene, read that scene's section too (hand-off rule in ENGINE.md).
 3. ${S}/style/STYLE_GUIDE.md sections 1-2 (the client's look: it overrides ${root}/work/plan/CRAFT_DEFAULTS.md), and the board
    tiles / example scenes named in your spec's "refs" line (paths from the project root).
+4. ${root}/remotion/public/brand/README.md - the REAL logo + UI glyph library and its rules.
 CAMERA and SHADE in remotion/src/data/edit.ts are FINAL: at seams derive framing and band with camAt/bandAt, never type numbers.
+HOUSE STANDARDS (CRAFT_DEFAULTS section 5; they override any colour the style guide names): (a) colours come from THIS video's
+footage palette: import C/accentGlow/alpha from '../theme' (never '../data/style_theme'), every colour is a token or alpha()/mix()
+of one, no hex or rgb literals except a brand's own colours and white/black; light scenes use PaperBG tone="palette".
+(b) every brand/app/platform is the REAL logo (BrandLogo / Glyph brand from components/Brand.tsx) and every UI looks like the
+real product with real glyphs (Glyph name); never draw a stand-in. Missing asset: python work/scripts/fetch_brand_assets.py
+--si <slug> | --commons "<Commons file title>" <name>.svg | --ui <name> (run from the project root).
 
 WRITE ONLY remotion/src/scenes/${id}.tsx and remotion/src/preview/${id}.entry.tsx. Your transitions live inside your scene.
 Do NOT run integrate.py, finalize.sh or full renders, and do not touch other scenes (they are being written in parallel).

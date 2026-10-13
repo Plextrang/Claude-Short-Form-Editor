@@ -8,12 +8,23 @@ only your own scene file + your own preview entry. Define any helper inside your
 - `src/theme.ts` — the ACTIVE client style's fonts and colours (its values are in `src/data/style_theme.ts`, copied from
   `clients/<client>/<style>/style/theme.ts`): `SANS`, `SERIF` (accent font, usually italic), `SERIF_UPRIGHT`, `MONO`, colours
   `C.white` (captions), `C.accent` + `C.accentRgb` (the one highlight colour; use `'rgba(' + C.accentRgb + ',0.5)'` for alpha),
-  `C.accentDeep, C.accentSoft, C.ink, C.inkSoft, C.grey, C.paper, C.paperCool, C.grid`, `sansShadow`, `accentGlow(a)`.
-  Always use these tokens; never type the client's hex values into a scene.
+  `C.accentDeep, C.accentSoft, C.ink, C.inkSoft, C.grey, C.paper, C.paperCool, C.grid`, `C.warm, C.warmDeep` (a second colour,
+  e.g. a lamp's glow), `sansShadow`, `accentGlow(a)`, and helpers `alpha(C.ink, 0.3)` (rgba of a token) and `mix(a, b, t)`.
+  **FOOTAGE PALETTE:** when `src/data/palette.ts` is set (work/scripts/palette.py, per video), these colour tokens are THIS
+  video's colours (taken from the speaker's clothing, the set and its lights), merged over the style's. So: ALWAYS import from
+  `'../theme'` (never from `'../data/style_theme'`, which bypasses the palette), and never type a hex/rgb value into a scene:
+  every colour is a token, `alpha(token, a)` or `mix(...)`. The only literal colours allowed are a real brand's own colours
+  (inside its logo file or a brand UI, e.g. YouTube red) and pure `white`/`black` for UI chrome.
 - `src/lib/anim.ts` — `EASE_OUT` (fast-then-slow: all entrances), `EASE_IN_OUT`, `EASE_IN`, `clamp01`, `prog(frame, start, dur, ease)`
   → 0..1, `sp(frame,fps,start,cfg)` spring, `wordPop()`, `rand(seed)` (deterministic; NEVER Math.random / Date), `lerp`.
-- `src/components/PaperBG.tsx` — `<PaperBG tone="white"|"warm" grid gridSize shadow shadowAngle drift localFrame/>`: a light
-  paper background (gradient + grid + casted window light + grain + vignette). Use it when the style guide calls for light scenes.
+- `src/components/PaperBG.tsx` — `<PaperBG tone="white"|"warm"|"palette" grid gridSize shadow shadowAngle drift localFrame/>`: a light
+  paper background (gradient + grid + casted window light + grain + vignette). Use it when the style guide calls for light scenes;
+  use `tone="palette"` whenever the footage palette is set (paper, grid, shadows and vignette tinted to the video's colours).
+- `src/components/Brand.tsx` — REAL logos and UI (library in `public/brand`, `public/ui`; index + rules in
+  `public/brand/README.md`): `<BrandLogo name="premiere" width={120}/>` (official full-colour logo), `<Glyph name="thumb_up"
+  size={40} color={C.ink}/>` (real UI glyph, Material Symbols; `fill` for the filled variant), `<Glyph brand="instagram"
+  size={60}/>` (brand glyph in its brand colour). Missing a brand? `python work/scripts/fetch_brand_assets.py --si <slug>` or
+  `--commons "<file title>" <name>.svg` (see its docstring); never draw a stand-in.
 - `src/components/Primitives.tsx` — `SceneText` (word-by-word blur pop; words:[{t,f,serif,accent,weight}]), `Cursor`, `SelectBox`,
   `Barcode`, `CropMarks`, `CircleReveal`, `SquareReveal`, `DepthBlob`, `Tag`, `ContactShadow`.
 - `src/components/Devices.tsx` — `GlassCard` (dark glass card for on-screen overlays, no backdrop-filter), `Phone`, `UIRow`.
@@ -36,7 +47,8 @@ phone expands likewise. Global white flashes come from FLASHES in edit.ts — do
 - `background-clip: text` paints only inside the span box: pad it (paddingBottom 0.28em + marginBottom -0.28em, as SceneText does)
   or descenders (g, p, y) get sliced.
 - Composition ids: only a-z A-Z 0-9 and '-'. Avoid >30 simultaneous CSS blur filters; prefer SVG gradients over huge box-shadows.
-- No external images/fonts/network. Everything is SVG/CSS/React.
+- No network. The only image files are the real brand library (`public/brand`, `public/ui`, via `Brand.tsx` or
+  `staticFile`) and the footage; everything else is SVG/CSS/React. Fonts come from the theme.
 
 ## Your scene contract
 File `src/scenes/<ID>.tsx` (ID = `FS<n>_<Name>` full-screen or `OS<n>_<Name>` on-screen; integrate.py discovers by prefix):
@@ -59,8 +71,17 @@ export const <ID>: React.FC = () => {
   so it is legible ON its spoken frame.
 - Motion: moving from frame 1; fast-then-slow; build from blank (background → hero → text); constant subtle drift (1.00→1.04);
   no spins/orbits/swoops; one hero per scene. Safe zone x 70..1010, y 160..1700.
-- Look: exactly what the client's STYLE_GUIDE.md section 1 says (palette, backgrounds, text treatment, motifs). Where it is silent:
+- Look: exactly what the client's STYLE_GUIDE.md section 1 says (backgrounds, text treatment, motifs, layouts). Where it is silent:
   premium, minimal and crisp; one accent colour; small restrained text with one accent word.
+- Colour: the footage palette (theme tokens) replaces the style's stock colours wherever the guide names a colour ("orange
+  accent" = `C.accent`, "near-black" = `C.ink`, "warm white" paper = `C.paper`...). Light scenes tint toward the palette
+  (`PaperBG tone="palette"`, ink-tinted shadows and grid); dark glass = `alpha(C.ink, 0.8)` with accent glows.
+- Real world: every product, platform, app, payment method or brand the speaker names or the scene shows is the REAL logo
+  (`BrandLogo` / `Glyph brand`), and every UI is the real product's layout with real glyphs (`Glyph name`): YouTube's player,
+  Studio and comment sheet; Instagram's DMs and profile; TikTok's action rail; Premiere Pro's dark panels and timeline;
+  CapCut's mobile editor; iOS notifications. Logos keep their own colours and proportions; the palette colours everything
+  around them. No invented app icons, no generic play triangle in an accent box, no "Pr" typed as text. Text inside a UI is
+  the video's words or neutral placeholders (grey bars), never invented usernames, counts or quotes presented as real.
 
 ## Seams (the #1 source of defects)
 - Reveal over / hand back to the talking head (circle / square / mosaic reveals, iris exits, phone expands): the A-roll you show must
@@ -97,7 +118,10 @@ registerRoot(Root);
 3. Craft checklist: (1) every key word legible (>= 0.7 opacity) on its spoken frame; (2) the payoff fully landed and held >= 10 frames
    before the exit starts; (3) exits move as one unit — no translucent element over another, no outline/glow ghosts, no off-palette
    wash; (4) text reveals in place (no sideways slides); (5) draw-ons/reveals fast-then-slow; (6) nothing informative under 24 px or
-   below 0.6 opacity; (7) something moves in every 10-frame window; (8) nothing clipped, overlapping or outside the safe zone.
+   below 0.6 opacity; (7) something moves in every 10-frame window; (8) nothing clipped, overlapping or outside the safe zone;
+   (9) colour: `grep -nE "#[0-9a-fA-F]{3,6}\b|rgba?\(" src/scenes/<ID>.tsx` finds only brand colours and white/black, and the
+   scene reads as the footage's palette; (10) every brand/app/UI is the real asset, crisp at full scale (open one full-res still
+   of the logo), not stretched, not recoloured, not boxed twice.
 4. `npx tsc --noEmit -p .` — fix errors in YOUR files only.
 5. Report: `events` = every visible motion beat at the ABSOLUTE frame where it visibly lands/peaks in your stills (not the code's start
    frame) — the sound designer syncs SFX to these; opaqueFrom/opaqueUntil (-1 for on-screen); knownIssues.

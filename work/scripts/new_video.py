@@ -4,15 +4,15 @@ usage: python work/scripts/new_video.py <slug-of-the-PREVIOUS-video> [--dry-run]
 
 MOVES (relative paths preserved) into archive/<slug>/ :
   deliverables/, remotion/out/, remotion/public/{aroll.mp4,voice.wav,music.wav,mix.wav}, remotion/src/scenes/*,
-  remotion/src/preview/*, remotion/src/data/{edit.ts,words.json,scenes.ts}, work/{audio,frames,music,music_audition}/*,
+  remotion/src/preview/*, remotion/src/data/{edit.ts,words.json,scenes.ts,palette.ts}, work/{audio,frames,music,music_audition}/*,
   work/transcript/*, work/plan/* (except CRAFT_DEFAULTS.md, ENGINE.md), work/*.log
 COPIES (they stay, you edit the per-video part): work/scripts/build_edl.py (KEEP list), work/scripts/transcribe_cut.py
   (initial_prompt vocabulary), work/active_style.json (records which client style the video used).
 ALSO MOVES the raw video in input/ when it is the PREVIOUS video's footage (same duration as work/audio/voice48k.wav, which was
   extracted from it), so it can never be re-edited by mistake. A NEW recording already dropped into input/ is kept.
-KEEPS: the engine (components, lib, Main/Root, scripts), clients/ (styles, sound packs and their catalogues),
+KEEPS: the engine (components, lib, Main/Root, scripts), clients/ (styles, sound packs and their catalogues), remotion/public/{brand,ui}/ (the real logo + UI glyph library),
   work/pylibs + work/hf_cache (Whisper install), archive/ (old scenes = worked examples).
-Then copies fresh edit.ts / words.json / scenes.ts from work/templates so the project still typechecks."""
+Then copies fresh edit.ts / words.json / scenes.ts / palette.ts from work/templates so the project still typechecks."""
 import os, sys, glob, shutil, subprocess
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -48,7 +48,7 @@ for f in ['aroll.mp4', 'voice.wav', 'music.wav', 'mix.wav']:
     moves += glob.glob(os.path.join(PROJ, 'remotion', 'public', f))
 moves += glob.glob(os.path.join(PROJ, 'remotion', 'src', 'scenes', '*'))
 moves += glob.glob(os.path.join(PROJ, 'remotion', 'src', 'preview', '*'))
-moves += [os.path.join(PROJ, 'remotion', 'src', 'data', f) for f in ['edit.ts', 'words.json', 'scenes.ts']]
+moves += [os.path.join(PROJ, 'remotion', 'src', 'data', f) for f in ['edit.ts', 'words.json', 'scenes.ts', 'palette.ts']]
 for d in ['audio', 'frames', 'music', 'music_audition']:
     moves += glob.glob(os.path.join(ROOT, d, '*'))
 moves += glob.glob(os.path.join(ROOT, 'transcript', '*'))
@@ -70,6 +70,6 @@ os.makedirs(os.path.join(PROJ, 'deliverables'), exist_ok=True)
 open(os.path.join(PROJ, 'deliverables', '.gitkeep'), 'a').close()
 
 DATA = os.path.join(PROJ, 'remotion', 'src', 'data')
-for f in ['edit.ts', 'words.json', 'scenes.ts']:  # fresh per-video data from work/templates
+for f in ['edit.ts', 'words.json', 'scenes.ts', 'palette.ts']:  # fresh per-video data from work/templates
     shutil.copy(os.path.join(ROOT, 'templates', f), os.path.join(DATA, f))
 print(f'\narchived {len(moves)} items to archive/{args[0]}/ and reset per-video data. Next: put the NEW raw video in input/.')

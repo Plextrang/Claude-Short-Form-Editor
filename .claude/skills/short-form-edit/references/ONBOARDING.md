@@ -54,3 +54,14 @@ give the style its own `sound-pack/` only if it uses different sounds.
 ## Refreshing a style
 When the user updates `source/`, re-run the steps and update `STYLE_GUIDE.md` and `theme.ts` in place. Keep earlier notes that
 the client approved.
+
+## Footage palette and real brand assets (applies to every style)
+- Write `theme.ts` so its colours are the style's DEFAULT palette: keep every key of the template's `C` (add `warm` /
+  `warmDeep` if the style has a second colour) and build `accentGlow` from `C.accentRgb` (or the accent's literal "r,g,b",
+  which the engine re-tints). Per video, `work/scripts/palette.py` replaces these colours with the footage's own palette, so
+  name colours in `STYLE_GUIDE.md` by ROLE ("the accent", "near-black ink", "paper") next to the default hex; never make a
+  design rule depend on one specific hue.
+- If the client's brand demands fixed colours on every video (strict brand guidelines), add the line `Palette: fixed` to the
+  style guide: palette.py then keeps the style's colours.
+- Note in the style guide which real products, apps and platforms this client's videos usually mention, so planners reach for
+  the real logos and UIs (`remotion/public/brand/README.md`; add missing ones to `work/brand_assets.json`).

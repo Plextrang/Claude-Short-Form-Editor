@@ -25,6 +25,7 @@ remotion/src/preview/*
 remotion/src/data/edit.ts
 remotion/src/data/words.json
 remotion/src/data/scenes.ts
+remotion/src/data/palette.ts
 work/audio/
 work/frames/
 work/music/
@@ -38,6 +39,7 @@ work/transcript/*
 # --- installed tools (recreated by the first-run setup)
 remotion/node_modules/
 work/pylibs/
+work/brand_cache/
 work/hf_cache/
 __pycache__/
 *.pyc

@@ -41,3 +41,18 @@ Reviewing and verifying alone (review + verify classes) was 41% of everything.
 - Seam discipline: camera match + band hand-off on every reveal.
 - Sound cues aligned to reported event frames; sample-accurate placement by peak.
 - A strips-based QA pass at every seam.
+
+## Client feedback after the 15-video batch (Oct 2026): two new house standards
+The client approved the batch, then asked for (1) REAL icons, logos and UIs instead of the stand-ins we drew, and (2) animation
+colours matched to the footage instead of the same orange every time. A v2 of "Doubling Down on YouTube" (lavender shirt,
+lavender room, peach lamp; real YouTube / Premiere Pro / CapCut assets and a real YouTube comment sheet) was called
+"literally perfect, even much better". Built into the engine: `palette.py` + `src/data/palette.ts` (merged in `theme.ts`),
+`fetch_brand_assets.py` + `Brand.tsx` + `PaperBG tone="palette"`, and rules in ENGINE.md, CRAFT_DEFAULTS §5 and the skill.
+Lessons from that run:
+- Scenes that import colours from `../data/style_theme` silently bypass the palette: always import from `../theme`.
+- Hard-coded rgba() shadows/glows are where stock colours hide; build them from tokens with `alpha()`.
+- `capcut_icon.svg` is the complete app icon: an agent boxed it inside a second tile. Read the brand README notes.
+- CSS-mask glyphs are not awaited by the renderer; `Glyph` inlines the SVG path behind delayRender instead.
+- Cost of the v2 rebuild (plan revision + 7 scenes + finish): ~1.5M subagent tokens, ~29 min.
+- Batch prep: raws at other sizes/frame rates must be conformed to 1080x1920 / 30 fps CFR before the cut (render_cut trims by
+  30 fps frame index); build_edl's energy refinement does nothing on noisy rooms (floor above ~-40 dB): check edl.json.

@@ -7,6 +7,10 @@ in **your client's style**, from their creative direction and their sound pack:
 - camera punch-ins that hide every jump cut;
 - captions designed from the client's creative direction (fonts, colours, emphasis words);
 - 10+ custom motion-graphics scenes and on-screen UI cards, built in code (Remotion) in the client's look;
+- **colours taken from the footage**: every video gets its own palette from the speaker's clothing, the set and its lights
+  (a blue shirt gives blue animations), so no two videos look the same and the graphics feel part of the shot;
+- **real logos and real interfaces**: YouTube, Instagram DMs, TikTok, Premiere Pro, CapCut and 60+ other brands appear as
+  their official logos and real-looking UIs, never drawn stand-ins;
 - sound design placed frame-accurately from the client's sound pack;
 - background music, plus a phone-ready mix;
 - QA, and deliverables: video, audio stems, subtitles and edit notes.
@@ -66,6 +70,8 @@ working files are moved to `archive/<video>/` automatically.
 | `work/plan/CRAFT_DEFAULTS.md` | General editing, motion and sound rules, used wherever a client's style doesn't say otherwise |
 | `work/plan/ENGINE.md` | The contract every scene follows |
 | `work/templates/` | Fresh per-video data files and the theme template for new styles |
+| `work/scripts/palette.py` | Builds each video's colour palette from its footage (`--accent` / `--warm` to steer, `--off` to keep the style's colours) |
+| `work/scripts/fetch_brand_assets.py`, `work/brand_assets.json` | Downloads the real logo + UI glyph library into `remotion/public/brand` and `remotion/public/ui` (run automatically by the setup check; `--si`, `--commons`, `--ui` add more) |
 | `input/`, `deliverables/`, `archive/` | Your footage, your results, previous videos |
 
 ## Notes
@@ -79,3 +85,7 @@ working files are moved to `archive/<video>/` automatically.
   - [Remotion](https://www.remotion.dev/license) is free for individuals and small teams; larger companies need a company licence.
   - Fonts are loaded from Google Fonts (open source); a client's paid font is replaced by the closest Google Font.
   - Sound effects and music are subject to their own licences (the client's pack, your Epidemic Sound subscription, ...).
+  - Brand assets are downloaded on your machine, never stored in this repo: brand glyphs from
+    [simple-icons](https://simpleicons.org) (CC0), UI glyphs from [Material Symbols](https://fonts.google.com/icons)
+    (Apache-2.0), official app logos from [Wikimedia Commons](https://commons.wikimedia.org). Logos are trademarks of their
+    owners; they are shown to refer to the product the speaker talks about.

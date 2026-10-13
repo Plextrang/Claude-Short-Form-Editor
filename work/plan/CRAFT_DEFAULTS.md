@@ -44,10 +44,28 @@ Note in `EDIT_NOTES.md` any default you used where the style guide was silent on
 
 ## 4. Technical constraints (how scenes are built)
 - Everything is built procedurally in Remotion 4 (React + TSX, SVG, CSS, canvas) at 1080x1920@30fps. No AI image or video
-  generation, no stock images, no external files or network. Objects must be drawable with SVG/CSS (gradients, shadows,
+  generation, no stock images, no network. The one exception is the real brand library (official logos + UI glyphs,
+  `remotion/public/brand` and `public/ui`, see section 5). Objects must be drawable with SVG/CSS (gradients, shadows,
   blur, masks, SVG feTurbulence noise, layered gradients and CSS 3D transforms for depth).
 - The talking head can be transformed per frame (punch-ins, pushes) and reused inside designs (inside a phone, a card, a circle
   mask) with `ARollInset`. Cut-outs of the person are not possible (no segmentation).
 - Fonts: whatever the style's `theme.ts` loads (any Google Font via @remotion/google-fonts). A client's paid/custom font is
   replaced by the closest Google Font unless its font file is added to the style.
 - Captions are a separate layer over the talking head (hidden or restyled during full-screen scenes).
+
+## 5. Colour from the footage, real logos and real interfaces (approved by the client as the house standard)
+- **Colour comes from the footage, not from a stock accent.** Every video gets its own palette from what is on camera: the
+  speaker's clothing first, then the set and its practical lights (`work/scripts/palette.py`). A blue shirt means blue scenes;
+  a lavender room means orchid and plum. The palette replaces the style's stock colours in captions, cards and scenes, so the
+  edit feels like one piece with the footage and no two videos look the same. Fonts, layouts and motion stay the style's.
+  Check the palette by eye on `work/frames/palette.png` and steer it (`--accent`, `--warm`) when the strongest colour is
+  the wrong one (e.g. a bright prop in a corner). Neutral footage keeps the style's accent. A style can lock its colours
+  with "Palette: fixed" in its style guide.
+- **Real logos.** Whenever the speaker names, or a scene shows, a product, platform, app, tool, bank or brand, use its
+  REAL logo (YouTube, Instagram, TikTok, Premiere Pro, CapCut, Stripe...). Never draw a stand-in or a generic icon.
+- **Real interfaces.** UIs look like the real product a viewer has used: YouTube's player, Studio analytics and comment
+  sheet; Instagram's DM thread and profile; TikTok's right-hand action rail; Premiere Pro's dark panels and timeline;
+  CapCut's mobile editor; iOS notifications and lock screen. Use the real UI glyphs (Material Symbols for Google/YouTube/
+  Android). Put the speaker's own footage inside players and editors (`ARollInset`).
+- Brand assets keep their own colours and proportions; the palette colours everything around them. Text inside a real UI
+  is the video's own words or neutral placeholder bars, never invented usernames, numbers or quotes presented as real.

@@ -12,3 +12,5 @@ This repo turns a raw talking-head recording into a finished 1080x1920 short in 
 - Raw video goes in `input/` (exactly one file); an optional music track goes in `input/music/`. Results go to `deliverables/`.
 - Work only inside this folder (first-run package installs and Remotion temp cleanup excepted).
 - Never copy client material (anything in `clients/` except `_template/`) into tracked files.
+- House standards on every edit: animation colours come from the video's own footage (`work/scripts/palette.py`), and every
+  brand, app or UI on screen is the real logo / real interface (`remotion/public/brand`, `Brand.tsx`), never a drawn stand-in.

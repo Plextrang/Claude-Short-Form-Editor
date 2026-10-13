@@ -31,7 +31,9 @@ Put the raw video in `input/` and tell Claude which client and style to use, e.g
 > Use the short-form-edit skill to edit the video in input/ for **acme-media/talking-head**. ...
 
 The first edit for a new style starts with onboarding: Claude reads the creative direction and writes `style/STYLE_GUIDE.md`
-and `style/theme.ts` (colours and fonts), then edits as usual. After that, every edit for that style starts straight away.
+and `style/theme.ts` (colours and fonts), then edits as usual. The theme's colours are the style's defaults: on each video the
+engine replaces them with a palette taken from that video's footage (add the line `Palette: fixed` to the style guide if the
+client's brand colours must stay the same on every video). After that, every edit for that style starts straight away.
 
 ## More styles for the same client
 Add another folder next to the first (e.g. `clients/acme-media/podcast-clips/source/`) and drop that style's creative

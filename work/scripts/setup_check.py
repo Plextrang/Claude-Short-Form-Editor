@@ -3,7 +3,8 @@ usage: python work/scripts/setup_check.py
 - Python packages (requirements.txt): looked up the same way the scripts do (work/pylibs first, then the normal environment);
   missing ones are installed with pip into the current Python environment.
 - Node packages for the video engine: `npm ci` in remotion/ if node_modules is missing.
-- ffmpeg + ffprobe must be on PATH (cannot be installed automatically - the script tells you)."""
+- ffmpeg + ffprobe must be on PATH (cannot be installed automatically - the script tells you).
+- Real brand logos + UI glyphs for the scenes: runs fetch_brand_assets.py when remotion/public/brand/ is missing."""
 import os, sys, shutil, subprocess, importlib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -13,7 +14,7 @@ ok = True
 HINT = {'win32': 'winget install -e --id {w}', 'darwin': 'brew install {b}'}.get(sys.platform, 'sudo apt install {a}')
 
 DATA = os.path.join(PROJ, 'remotion', 'src', 'data')
-for f in ['edit.ts', 'words.json', 'scenes.ts', 'style_theme.ts']:  # git-ignored files: start from the templates
+for f in ['edit.ts', 'words.json', 'scenes.ts', 'style_theme.ts', 'palette.ts']:  # git-ignored files: start from the templates
     if not os.path.exists(os.path.join(DATA, f)):
         shutil.copy(os.path.join(ROOT, 'templates', f), os.path.join(DATA, f))
         print('created remotion/src/data/' + f + ' from work/templates')
@@ -48,5 +49,13 @@ for tool in ['ffmpeg', 'ffprobe']:
         print(f'MISSING: {tool} - install ffmpeg: ' + HINT.format(w='Gyan.FFmpeg', b='ffmpeg', a='ffmpeg')); ok = False
 if ok:
     print('ffmpeg: ok')
+brand = os.path.join(PROJ, 'remotion', 'public', 'brand', 'README.md')
+if not os.path.exists(brand) and shutil.which('npm'):
+    print('fetching real brand logos + UI glyphs (fetch_brand_assets.py) ...', flush=True)
+    subprocess.run([sys.executable, os.path.join(ROOT, 'scripts', 'fetch_brand_assets.py')])
+if os.path.exists(brand):
+    print('brand assets: ok')
+else:
+    print('WARNING: no brand assets - run python work/scripts/fetch_brand_assets.py (scenes need real logos/UI glyphs)')
 print('SETUP OK' if ok else 'SETUP INCOMPLETE - fix the MISSING items above')
 sys.exit(0 if ok else 1)
